@@ -1,6 +1,6 @@
 [user]
-  name = Jeff Geerling
-  email = geerlingguy@mac.com
+	name = Daniel Depaoli
+	email = daniel.depaoli@xpeppers.com
 [core]
   editor = vi
   excludesfile = ~/.gitignore
