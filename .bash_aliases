@@ -4,6 +4,9 @@ export LC_ALL=en_US.UTF-8
 #Load variable for virtualenv python
 source /usr/local/bin/virtualenvwrapper.sh
 
+#Active aws virtualenv
+workon aws
+
 alias ll='ls -a -l -G "$@"'
 alias grep='/usr/bin/grep --colour=always "$@"'
 alias ora='date +%X'
@@ -21,6 +24,7 @@ alias synctos3='/Users/deppa/.virtualenvs/aws/bin/aws s3 sync --profile daniel -
 alias awsregionlist='echo -e "us-east-1\nus-east-2\nus-west-1\nus-west-2\nap-northeast-2\nap-southeast-1\nap-southeast-2\nap-northeast-1\neu-central-1\neu-west-1\neu-west-2"'
 alias gitlab-create='python ~/workspace/gitlab/create-project/create-project.py "$@"'
 alias w='cd ~/workspace'
+alias update_mac='ansible-playbook ~/mac-dev-playbook/main.yml -i ~/mac-dev-playbook/inventory -K'
 #avoid to change tab name
 #http://superuser.com/questions/343747/how-do-i-stop-automatic-changing-of-iterm-tab-titles
 export TERM=xterm
