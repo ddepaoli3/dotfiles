@@ -7,6 +7,9 @@ source /usr/local/bin/virtualenvwrapper.sh
 #Active aws virtualenv
 workon aws
 
+#Export pass folder
+export PASSWORD_STORE_DIR=/Users/deppa/workspace/gitlab/xpeppers-keys-password
+
 alias ll='ls -a -l -G "$@"'
 alias grep='/usr/bin/grep --colour=always "$@"'
 alias ora='date +%X'
