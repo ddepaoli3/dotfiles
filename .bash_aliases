@@ -10,6 +10,9 @@ workon aws
 #Export pass folder
 export PASSWORD_STORE_DIR=/Users/deppa/workspace/gitlab/xpeppers-keys-password
 
+#Avoid ansible check hosting
+export ANSIBLE_HOST_KEY_CHECKING=False
+
 alias ll='ls -a -l -G "$@"'
 alias grep='/usr/bin/grep --colour=always "$@"'
 alias ora='date +%X'
