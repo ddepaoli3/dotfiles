@@ -31,6 +31,8 @@ alias awsregionlist='echo -e "us-east-1\nus-east-2\nus-west-1\nus-west-2\nap-nor
 alias gitlab-create='python ~/workspace/gitlab/create-project/create-project.py "$@"'
 alias w='cd ~/workspace'
 alias update_mac='ansible-playbook ~/mac-dev-playbook/main.yml -i ~/mac-dev-playbook/inventory -K'
+alias remove-ami='~/workspace/tools/aws/remove-ami.sh "$@"'
+
 #avoid to change tab name
 #http://superuser.com/questions/343747/how-do-i-stop-automatic-changing-of-iterm-tab-titles
 export TERM=xterm
