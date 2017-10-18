@@ -13,7 +13,8 @@
 [web]
   browser = google-chrome
 [credential]
-  helper = osxkeychain
+	helper = !aws codecommit credential-helper --profile xpeppers-test
+	UseHttpPath = true
 [push]
   default = simple
 [merge]
