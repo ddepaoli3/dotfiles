@@ -32,6 +32,7 @@ alias gitlab-create='python ~/workspace/gitlab/create-project/create-project.py 
 alias w='cd ~/workspace'
 alias update_mac='ansible-playbook ~/mac-dev-playbook/main.yml -i ~/mac-dev-playbook/inventory -K'
 alias remove-ami='~/workspace/tools/aws/remove-ami.sh "$@"'
+alias verdone="open -a /Applications/Google\ Chrome.app https://www.youtube.com/watch\?v\=BF56TzwEt-g\#t\=0m48s"
 
 #avoid to change tab name
 #http://superuser.com/questions/343747/how-do-i-stop-automatic-changing-of-iterm-tab-titles
