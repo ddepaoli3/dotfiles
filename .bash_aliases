@@ -8,7 +8,7 @@ source /usr/local/bin/virtualenvwrapper.sh
 workon aws
 
 #Export pass folder
-export PASSWORD_STORE_DIR=/Users/deppa/workspace/gitlab/xpeppers-keys-password
+export PASSWORD_STORE_DIR=/Users/deppa/workspace/xpeppers/xpeppers-keys-password
 
 #Avoid ansible check hosting
 export ANSIBLE_HOST_KEY_CHECKING=False
@@ -33,10 +33,32 @@ alias w='cd ~/workspace'
 alias update_mac='ansible-playbook ~/mac-dev-playbook/main.yml -i ~/mac-dev-playbook/inventory -K'
 alias remove-ami='~/workspace/tools/aws/remove-ami.sh "$@"'
 alias verdone="open -a /Applications/Google\ Chrome.app https://www.youtube.com/watch\?v\=BF56TzwEt-g\#t\=0m48s"
-
+alias noncapisconoun="open -a /Applications/Google\ Chrome.app https://www.youtube.com/watch\?v\=ZwH9Dkv3s_s\#t\=1m0s"
+alias terraform="~/terraform-bin/terraform-0.11.10"
 #avoid to change tab name
 #http://superuser.com/questions/343747/how-do-i-stop-automatic-changing-of-iterm-tab-titles
 export TERM=xterm
+
+set_aws_credentials()
+{
+profile_name=$1
+role_arn=`/usr/bin/grep -A4 "\[$profile_name\]" ~/.aws/credentials|/usr/bin/grep role_arn|sed 's/^.*arn:/arn:/g'`
+
+echo $profile_name
+echo $role_arn
+json_out=`aws --profile $profile_name sts assume-role --role-arn $role_arn --role-session-name $profile_name`
+
+export AWS_ACCESS_KEY_ID=`echo $json_out| jq .Credentials.AccessKeyId`
+export AWS_SECRET_ACCESS_KEY=`echo $json_out| jq .Credentials.SecretAccessKey`
+export AWS_SESSION_TOKEN=`echo $json_out| jq .Credentials.SessionToken`
+}
+
+unset_aws_credentials()
+{
+unset AWS_ACCESS_KEY_ID
+unset AWS_SESSION_TOKEN
+unset AWS_SECRET_ACCESS_KEY
+}
 
 ec2_list_aws()
 {
