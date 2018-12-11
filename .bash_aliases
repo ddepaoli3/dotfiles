@@ -39,18 +39,24 @@ alias terraform="~/terraform-bin/terraform-0.11.10"
 #http://superuser.com/questions/343747/how-do-i-stop-automatic-changing-of-iterm-tab-titles
 export TERM=xterm
 
-set_aws_credentials()
-{
-profile_name=$1
-role_arn=`/usr/bin/grep -A4 "\[$profile_name\]" ~/.aws/credentials|/usr/bin/grep role_arn|sed 's/^.*arn:/arn:/g'`
 
-echo $profile_name
-echo $role_arn
-json_out=`aws --profile $profile_name sts assume-role --role-arn $role_arn --role-session-name $profile_name`
+function setup_aws_credentials() {
+    profile_name=$1
+    role_arn=`/usr/bin/grep -A4 "\[$profile_name\]" ~/.aws/credentials|/usr/bin/grep role_arn|sed 's/^.*arn:/arn:/g'`
+    local stscredentials
+    stscredentials=$(aws sts assume-role \
+        --profile $profile_name \
+        --role-arn "${role_arn}" \
+        --role-session-name something \
+        --query '[Credentials.SessionToken,Credentials.AccessKeyId,Credentials.SecretAccessKey]' \
+        --output text)
 
-export AWS_ACCESS_KEY_ID=`echo $json_out| jq .Credentials.AccessKeyId`
-export AWS_SECRET_ACCESS_KEY=`echo $json_out| jq .Credentials.SecretAccessKey`
-export AWS_SESSION_TOKEN=`echo $json_out| jq .Credentials.SessionToken`
+    AWS_ACCESS_KEY_ID=$(echo "${stscredentials}" | awk '{print $2}')
+    AWS_SECRET_ACCESS_KEY=$(echo "${stscredentials}" | awk '{print $3}')
+    AWS_SESSION_TOKEN=$(echo "${stscredentials}" | awk '{print $1}')
+    AWS_SECURITY_TOKEN=$(echo "${stscredentials}" | awk '{print $1}')
+    export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_SECURITY_TOKEN
+
 }
 
 unset_aws_credentials()
@@ -58,6 +64,7 @@ unset_aws_credentials()
 unset AWS_ACCESS_KEY_ID
 unset AWS_SESSION_TOKEN
 unset AWS_SECRET_ACCESS_KEY
+unset AWS_SECURITY_TOKEN
 }
 
 ec2_list_aws()
