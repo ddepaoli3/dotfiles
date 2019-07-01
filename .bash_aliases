@@ -6,7 +6,7 @@ export PATH="/Users/deppa/workspace-git/terraform-wrapper/bin:$PATH"
 source /usr/local/bin/virtualenvwrapper.sh
 
 #Active aws virtualenv
-workon aws
+workon aws3
 
 #Export pass folder
 export PASSWORD_STORE_DIR=/Users/deppa/workspace/xpeppers/xpeppers-keys-password
@@ -78,6 +78,13 @@ function synctos3()
 /Users/deppa/.virtualenvs/aws/bin/aws s3 sync --profile daniel-workspace-backup --storage-class STANDARD_IA ~/workspace-personale s3://workspace-daniel/workspace-personale
 }
 
+sync_to_disco_dati()
+{
+rsync -va --progress ~/workspace-personale /Volumes/discodati
+rsync -va --progress ~/workspace /Volumes/discodati
+rsync -va --progress ~/workspace-claranet /Volumes/discodati
+}
+
 unset_aws_credentials()
 {
 unset AWS_ACCESS_KEY_ID
@@ -125,3 +132,6 @@ fi
 }
 
 [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
+
+mkdir -p /Users/deppa/.local/share/
+mkdir -p /Users/deppa/.local/share/autojump/
