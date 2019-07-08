@@ -3,7 +3,7 @@ export LC_ALL=en_US.UTF-8
 export PATH="/Users/deppa/workspace-git/terraform-wrapper/bin:$PATH"
 
 #Load variable for virtualenv python
-source /usr/local/bin/virtualenvwrapper.sh
+source /Users/deppa/virtualenv/aws/bin/virtualenvwrapper.sh >> /dev/null
 
 #Active aws virtualenv
 workon aws3
@@ -96,7 +96,7 @@ unset AWS_DEFAULT_REGION
 
 ec2_list_aws()
 {
-aws ec2 describe-instances --query "Reservations[].Instances[].[InstanceId,InstanceType,State.Name,PrivateIpAddress,PublicIpAddress,Tags[?Key=='Name'] | [0].Value]" --output table --filters Name=instance-state-name,Values=running --profile "$@"
+aws ec2 describe-instances --query "Reservations[].Instances[].[InstanceId,InstanceType,State.Name,PrivateIpAddress,PublicIpAddress,Tags[?Key=='Name'] | [0].Value,KeyName]" --output table --filters Name=instance-state-name,Values=running --profile "$@"
 }
 
 clear ()
@@ -135,3 +135,5 @@ fi
 
 mkdir -p /Users/deppa/.local/share/
 mkdir -p /Users/deppa/.local/share/autojump/
+
+export VIRTUALENVWRAPPER_PYTHON=/Users/deppa/.virtualenvs/aws3/bin/python
