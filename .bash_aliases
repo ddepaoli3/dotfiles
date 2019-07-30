@@ -1,12 +1,9 @@
+##################
+#### Export #####
+##################
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export PATH="/Users/deppa/workspace-git/terraform-wrapper/bin:$PATH"
-
-#Load variable for virtualenv python
-source /Users/deppa/virtualenv/aws/bin/virtualenvwrapper.sh >> /dev/null
-
-#Active aws virtualenv
-workon aws3
 
 #Export pass folder
 export PASSWORD_STORE_DIR=/Users/deppa/workspace/xpeppers/xpeppers-keys-password
@@ -14,6 +11,18 @@ export PASSWORD_STORE_DIR=/Users/deppa/workspace/xpeppers/xpeppers-keys-password
 #Avoid ansible check hosting
 export ANSIBLE_HOST_KEY_CHECKING=False
 
+#avoid to change tab name
+#http://superuser.com/questions/343747/how-do-i-stop-automatic-changing-of-iterm-tab-titles
+#export TERM=xterm
+
+export aws_region_list=(us-east-2 us-east-1 us-west-1 us-west-2 ap-south-1 ap-northeast-3 ap-northeast-2 ap-southeast-1 ap-southeast-2 ap-northeast-1 ca-central-1 cn-north-1 cn-northwest-1 eu-central-1 eu-west-1 eu-west-2 eu-west-3 eu-north-1 sa-east-1 us-gov-east-1 us-gov-west-1)
+
+export VIRTUALENVWRAPPER_PYTHON=/Users/deppa/.virtualenvs/aws3/bin/python
+
+
+##################
+##### Alias ######
+##################
 alias ll='ls -a -l -G "$@"'
 alias grep='/usr/bin/grep --colour=always "$@"'
 alias ora='date +%X'
@@ -31,21 +40,29 @@ alias codecommittool='bash ~/workspace/gist/create-codecommit-repo.sh "$@"'
 alias awsregionlist='echo -e "us-east-1\nus-east-2\nus-west-1\nus-west-2\nap-northeast-2\nap-southeast-1\nap-southeast-2\nap-northeast-1\neu-central-1\neu-west-1\neu-west-2"'
 alias gitlab-create='python ~/workspace/gitlab/create-project/create-project.py "$@"'
 alias w='cd ~/workspace'
+alias k='cd ~/keys'
 alias update_mac='ansible-playbook ~/mac-dev-playbook/main.yml -i ~/mac-dev-playbook/inventory -K'
 alias remove-ami='~/workspace/tools/aws/remove-ami.sh "$@"'
 alias verdone="open -a /Applications/Google\ Chrome.app https://www.youtube.com/watch\?v\=BF56TzwEt-g\#t\=0m48s"
 alias noncapisconoun="open -a /Applications/Google\ Chrome.app https://www.youtube.com/watch\?v\=ZwH9Dkv3s_s\#t\=1m0s"
-alias terraform="~/terraform-bin/terraform-0.11.13"
+alias terraform="/usr/local/bin/terraform-0.12.3"
 alias myip="dig +short myip.opendns.com @resolver1.opendns.com"
-#avoid to change tab name
-#http://superuser.com/questions/343747/how-do-i-stop-automatic-changing-of-iterm-tab-titles
-export TERM=xterm
 
-export aws_region_list=(us-east-2 us-east-1 us-west-1 us-west-2 ap-south-1 ap-northeast-3 ap-northeast-2 ap-southeast-1 ap-southeast-2 ap-northeast-1 ca-central-1 cn-north-1 cn-northwest-1 eu-central-1 eu-west-1 eu-west-2 eu-west-3 eu-north-1 sa-east-1 us-gov-east-1 us-gov-west-1)
 
+##################
+#### Function ####
+##################
 function setup_aws_credentials() {
     profile_name=$1
-    role_arn=`/usr/bin/grep -A4 "\[$profile_name\]" ~/.aws/credentials|/usr/bin/grep role_arn|sed 's/^.*arn:/arn:/g'`
+    role_arn=`/usr/bin/grep -A4 "$profile_name\]" ~/.aws/credentials|/usr/bin/grep role_arn|sed 's/^.*arn:/arn:/g'`
+
+    if [[ "$role_arn" ]]
+    then
+        echo
+    else
+        role_arn=`/usr/bin/grep -A4 "$profile_name\]" ~/.aws/config|/usr/bin/grep role_arn|sed 's/^.*arn:/arn:/g'`
+    fi
+
     local stscredentials
     stscredentials=$(aws sts assume-role \
         --profile $profile_name \
@@ -78,14 +95,14 @@ function synctos3()
 /Users/deppa/.virtualenvs/aws/bin/aws s3 sync --profile daniel-workspace-backup --storage-class STANDARD_IA ~/workspace-personale s3://workspace-daniel/workspace-personale
 }
 
-sync_to_disco_dati()
+function sync_to_disco_dati()
 {
 rsync -va --progress ~/workspace-personale /Volumes/discodati
 rsync -va --progress ~/workspace /Volumes/discodati
 rsync -va --progress ~/workspace-claranet /Volumes/discodati
 }
 
-unset_aws_credentials()
+function unset_aws_credentials()
 {
 unset AWS_ACCESS_KEY_ID
 unset AWS_SESSION_TOKEN
@@ -94,18 +111,18 @@ unset AWS_SECURITY_TOKEN
 unset AWS_DEFAULT_REGION
 }
 
-ec2_list_aws()
+function ec2_list_aws()
 {
 aws ec2 describe-instances --query "Reservations[].Instances[].[InstanceId,InstanceType,State.Name,PrivateIpAddress,PublicIpAddress,Tags[?Key=='Name'] | [0].Value,KeyName]" --output table --filters Name=instance-state-name,Values=running --profile "$@"
 }
 
-clear ()
+function clear ()
 {
 echo -e "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 /usr/bin/clear
 }
 
-folder_tree ()
+function folder_tree ()
 {
 rm /Users/deppa/foldertree.json
 tree -d -f -o foldertree.json  -J /Users/deppa/
@@ -115,12 +132,7 @@ git commit -m "Folder tree of day `date +%F`"
 git checkout master
 }
 
-title ()
-{
-    echo -ne "\033]0;"$*"\007"
-}
-
-backup_workspace()
+function backup_workspace()
 {
 if [[ $(mount|grep CHIAVI) ]]
 then
@@ -131,9 +143,29 @@ else
 fi
 }
 
+function network_clean()
+{
+    sudo ifconfig utun0 down
+    sudo ifconfig utun1 down
+    sudo route -n flush; sudo route -n flush; sudo route -n flush
+    sudo networksetup -setnetworkserviceenabled Wi-Fi off
+    sudo networksetup -setnetworkserviceenabled Wi-Fi on
+}
+
+
+##################
+#### Source #####
+##################
+
+#Load variable for virtualenv python
+source /Users/deppa/virtualenv/aws/bin/virtualenvwrapper.sh >> /dev/null
+
+
+##################
+#### Other### ####
+##################
+
+#Active aws virtualenv
+workon aws3
+
 [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
-
-mkdir -p /Users/deppa/.local/share/
-mkdir -p /Users/deppa/.local/share/autojump/
-
-export VIRTUALENVWRAPPER_PYTHON=/Users/deppa/.virtualenvs/aws3/bin/python
