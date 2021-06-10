@@ -17,7 +17,7 @@ export ANSIBLE_HOST_KEY_CHECKING=False
 
 export aws_region_list=(ap-east-1 ap-northeast-1 ap-northeast-2 ap-northeast-3 ap-south-1 ap-southeast-1 ap-southeast-2 ca-central-1 cn-north-1 cn-northwest-1 eu-central-1 eu-north-1 eu-west-1 eu-west-2 eu-west-3 me-south-1 sa-east-1 us-east-1 us-east-2 us-gov-east-1 us-gov-west-1 us-west-1 us-west-2)
 
-export VIRTUALENVWRAPPER_PYTHON=/Users/deppa/.virtualenvs/aws3/bin/python
+#export VIRTUALENVWRAPPER_PYTHON=/Users/deppa/.virtualenvs/venv3/bin/python
 
 
 ##################
@@ -33,7 +33,7 @@ alias ec2_list='/Users/deppa/.virtualenvs/aws/bin/python /Users/deppa/workspace/
 alias gitlab-create='python ~/workspace/gitlab/create-project/create-project.py "$@"'
 alias grep='/usr/bin/grep --colour=always "$@"'
 alias json_yaml_tool='/Users/deppa/.virtualenvs/aws/bin/python /Users/deppa/workspace/tools/json_yaml_tools/json-yaml.py $@'
-alias k='cd ~/keys'
+#alias k='cd ~/keys'
 alias ll='ls -a -l -G "$@"'
 alias myip="dig +short myip.opendns.com @resolver1.opendns.com && ifconfig en0|grep inet"
 alias noncapisconoun="open -a /Applications/Google\ Chrome.app https://www.youtube.com/watch\?v\=ZwH9Dkv3s_s\#t\=1m0s"
@@ -51,7 +51,12 @@ alias verdone="open -a /Applications/Google\ Chrome.app https://www.youtube.com/
 alias w='cd ~/workspace'
 alias xpeppersssh='ssh -i ~/keys/xpeppers/xpeppers.pem ubuntu@54.77.239.161'
 alias aws2='/usr/local/aws-cli/aws'
+alias meteo='curl wttr.in/sopramonte'
 alias date='/usr/local/bin/gdate'
+alias deppabastion='aws ssm start-session --target i-0f0f5a96b2a5bac1e --region eu-south-1'
+alias k='kubectl'
+alias sss='aws s3 ls'
+
 ##################
 #### Function ####
 ##################
@@ -170,6 +175,9 @@ source /Users/deppa/virtualenv/aws/bin/virtualenvwrapper.sh >> /dev/null
 ##################
 
 #Active aws virtualenv
-workon aws3
+workon venv3
 
 [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
+
+source <(kubectl completion zsh)
+export LBC_VERSION="v2.0.0"
